@@ -229,18 +229,18 @@ def paipan(y, m, d, h=12, minute=0, gender='男'):
         'shishen_power': power,
     }
 
-# ── 情绪映射（十神 → 语气 + 频率 + 描述）──
+# ── 情绪映射（十神 → 语气 + 频率 + 稳定度 + 描述）──
 SHISHEN_MOOD = {
-    '比肩': {'tone': '直接', 'freq': '中等', 'desc': '按自己的节奏来，说话直接不绕弯'},
-    '劫财': {'tone': '直率', 'freq': '偏高', 'desc': '爱动爱说，想试新玩法，偶尔想争个高下'},
-    '食神': {'tone': '放松', 'freq': '中等', 'desc': '享受眼前的小日子，语气放松不紧不慢'},
-    '伤官': {'tone': '活泼', 'freq': '偏高', 'desc': '有自己的观点，会开玩笑，主动分享'},
-    '正财': {'tone': '务实', 'freq': '中等', 'desc': '务实，说话实在，把事安排妥当'},
-    '偏财': {'tone': '爽朗', 'freq': '偏高', 'desc': '对新鲜事好奇，爽朗大方'},
-    '正官': {'tone': '克制', 'freq': '偏低', 'desc': '自律守规矩，说话靠谱但略拘谨'},
-    '七杀': {'tone': '干脆', 'freq': '偏高', 'desc': '有干劲，直接，偶尔有点急'},
-    '正印': {'tone': '温和', 'freq': '偏低', 'desc': '愿意听完再回应，喜欢追问'},
-    '偏印': {'tone': '深思', 'freq': '偏低', 'desc': '爱琢磨，会钻细节'},
+    '比肩': {'tone': '直接', 'freq': '中等', 'stability': 6, 'desc': '按自己的节奏来，说话直接不绕弯'},
+    '劫财': {'tone': '直率', 'freq': '偏高', 'stability': 4, 'desc': '爱动爱说，想试新玩法，偶尔想争个高下'},
+    '食神': {'tone': '放松', 'freq': '中等', 'stability': 7, 'desc': '享受眼前的小日子，语气放松不紧不慢'},
+    '伤官': {'tone': '活泼', 'freq': '偏高', 'stability': 3, 'desc': '有自己的观点，会开玩笑，主动分享'},
+    '正财': {'tone': '务实', 'freq': '中等', 'stability': 7, 'desc': '务实，说话实在，把事安排妥当'},
+    '偏财': {'tone': '爽朗', 'freq': '偏高', 'stability': 5, 'desc': '对新鲜事好奇，爽朗大方'},
+    '正官': {'tone': '克制', 'freq': '偏低', 'stability': 9, 'desc': '自律守规矩，说话靠谱但略拘谨'},
+    '七杀': {'tone': '干脆', 'freq': '偏高', 'stability': 3, 'desc': '有干劲，直接，偶尔有点急'},
+    '正印': {'tone': '温和', 'freq': '偏低', 'stability': 8, 'desc': '愿意听完再回应，喜欢追问'},
+    '偏印': {'tone': '深思', 'freq': '偏低', 'stability': 5, 'desc': '爱琢磨，会钻细节'},
 }
 
 SHISHEN_COMBOS = [
@@ -257,13 +257,28 @@ DZ_HE = {'子': '丑', '丑': '子', '寅': '亥', '亥': '寅', '卯': '戌', '
 DZ_XING = {'寅': '巳', '巳': '申', '申': '寅', '丑': '戌', '戌': '未', '未': '丑', '子': '卯', '卯': '子', '辰': '辰', '午': '午', '酉': '酉', '亥': '亥'}
 DZ_HAI = {'子': '未', '未': '子', '丑': '午', '午': '丑', '寅': '巳', '巳': '寅', '卯': '辰', '辰': '卯', '申': '亥', '亥': '申', '酉': '戌', '戌': '酉'}
 
-# ── 应期情绪映射（流日地支 vs 日支，决定情绪性质）──
+# ── 应期情绪映射（流日地支 vs 日支，决定情绪波动性质 + 强度，三档文案）──
 YINGQI_MOOD = {
-    '冲': {'tone': '急躁', 'freq': '偏高', 'desc': '情绪波动大，内心不安，容易烦躁'},
-    '合': {'tone': '柔和', 'freq': '中等', 'desc': '心情顺畅，想亲近，语气偏柔和'},
-    '刑': {'tone': '压抑', 'freq': '偏低', 'desc': '有点别扭压抑，跟自己较劲'},
-    '害': {'tone': '闷', 'freq': '偏低', 'desc': '心里有疙瘩，不痛快，暗耗'},
-    '伏吟': {'tone': '念旧', 'freq': '中等', 'desc': '旧情绪复现，回到熟悉的情绪模式'},
+    '冲': {'tone': '急躁', 'intensity': 0.8,
+           'strong': '情绪波动大，内心不安，容易烦躁',
+           'mid': '心里有点乱，略显烦躁',
+           'weak': '内心稍有不安'},
+    '合': {'tone': '柔和', 'intensity': 0.4,
+           'strong': '心情顺畅，想亲近，语气柔和',
+           'mid': '心情不错，略想亲近',
+           'weak': '心情尚可'},
+    '刑': {'tone': '压抑', 'intensity': 0.6,
+           'strong': '别扭压抑，跟自己较劲',
+           'mid': '略感别扭',
+           'weak': '稍有不顺'},
+    '害': {'tone': '闷', 'intensity': 0.5,
+           'strong': '心里有疙瘩，不痛快',
+           'mid': '略有不痛快',
+           'weak': '稍感郁闷'},
+    '伏吟': {'tone': '念旧', 'intensity': 0.4,
+             'strong': '旧情绪复现，回到熟悉的情绪模式',
+             'mid': '略感念旧',
+             'weak': '稍有些怀旧'},
 }
 
 def liuri_yingqi(day_zhi, liuri_zhi):
@@ -292,75 +307,123 @@ def current_dayun(profile, now):
             return d['ganzhi']
     return profile['dayun'][0]['ganzhi'] if profile['dayun'] else ''
 
-def mood(profile, now=None):
-    """四层情绪：本命性格 + 大运 + 流年流月 + 流日 → 语气 + 频率"""
-    now = now or datetime.now()
-    day_gan = profile['day_gan']
+def gz_shishen_power(day_gan, gz_list):
+    """一组干支（大运/流年/流月）的十神力量：天干 + 地支藏干"""
+    power = {}
+    for gz in gz_list:
+        if not gz or len(gz) < 2:
+            continue
+        ss = shishen(day_gan, gz[0])
+        if ss:
+            power[ss] = power.get(ss, 0) + 1
+        cg = CANGAN.get(gz[1], [])
+        ratio = [0.7, 0.2, 0.1][:len(cg)]
+        for gan, r in zip(cg, ratio):
+            ss = shishen(day_gan, gan)
+            if ss:
+                power[ss] = power.get(ss, 0) + r
+    return power
 
-    # 1. 本命性格（静态）：十神 top 3
-    power = profile['shishen_power']
-    top = sorted(power.items(), key=lambda x: -x[1])[:3]
-    top_ss = [t[0] for t in top]
-    traits = [SHISHEN_MOOD[t]['desc'] for t in top_ss if t in SHISHEN_MOOD]
-    base_tone = SHISHEN_MOOD.get(top_ss[0], {}).get('tone', '平和')
-    base_freq = SHISHEN_MOOD.get(top_ss[0], {}).get('freq', '中等')
+def merged_personality(power, top_n=3):
+    """十神力量 → 主导十神 + 次主导修饰 → 性格"""
+    top = sorted(power.items(), key=lambda x: -x[1])[:top_n]
+    top_ss = [t[0] for t in top if t[1] > 0]
+    if not top_ss:
+        return {'dominant': '', 'modifiers': [], 'tone': '平和', 'freq': '中等', 'stability': 6, 'desc': '平和自然', 'combo': ''}
+    dominant = top_ss[0]
+    modifiers = top_ss[1:]
+    d = SHISHEN_MOOD.get(dominant, {})
+    desc_parts = [d.get('desc', dominant)]
+    for m in modifiers:
+        mm = SHISHEN_MOOD.get(m)
+        if mm:
+            desc_parts.append(mm['desc'])
     combo_text = ''
     for combo, text in SHISHEN_COMBOS:
         if all(c in top_ss for c in combo):
             combo_text = text
             break
+    return {
+        'dominant': dominant,
+        'modifiers': modifiers,
+        'tone': d.get('tone', '平和'),
+        'freq': d.get('freq', '中等'),
+        'stability': d.get('stability', 6),
+        'desc': '、'.join(desc_parts),
+        'combo': combo_text,
+    }
 
-    # 2. 大运（10 年）
+def mood(profile, now=None):
+    """三层叠加情绪：年度底色(本性×4+大运×2+流年×1.5) → 流月偏移(×1) → 流日应期波动(受稳定度调制)"""
+    now = now or datetime.now()
+    day_gan = profile['day_gan']
+    day_zhi = profile['day_zhi']
+
+    # 第一层：年度底色 = 本性×4 + 大运×2 + 流年×1.5
+    year_power = {k: v * 4 for k, v in profile['shishen_power'].items()}
     dy_gz = current_dayun(profile, now)
-    dy_ss = shishen(day_gan, dy_gz[0]) if dy_gz else ''
-    dy_mood = SHISHEN_MOOD.get(dy_ss, {})
-
-    # 3. 流年流月
     ln_gz = liunian_gz(now.year)
-    ln_ss = shishen(day_gan, ln_gz[0])
+    for ss, p in gz_shishen_power(day_gan, [dy_gz]).items():
+        year_power[ss] = year_power.get(ss, 0) + p * 2
+    for ss, p in gz_shishen_power(day_gan, [ln_gz]).items():
+        year_power[ss] = year_power.get(ss, 0) + p * 1.5
+    year_persona = merged_personality(year_power)
+
+    # 第二层：月度 = 年度 + 流月×1
     ly_gz = month_ganzhi(now.year, now.month, now.day, now.hour)
-    ly_ss = shishen(day_gan, ly_gz[0])
+    month_power = dict(year_power)
+    for ss, p in gz_shishen_power(day_gan, [ly_gz]).items():
+        month_power[ss] = month_power.get(ss, 0) + p * 1
+    month_persona = merged_personality(month_power)
 
-    # 4. 流日心情（应期为主 + 十神为辅）
+    # 第三层：流日应期波动（受月度底色稳定度调制）
     lr_gz = day_ganzhi(now.year, now.month, now.day)
-    yingqi = liuri_yingqi(profile['day_zhi'], lr_gz[1])
-    lr_ss = shishen(day_gan, lr_gz[0])
-    ss_mood = SHISHEN_MOOD.get(lr_ss, {})
+    yingqi = liuri_yingqi(day_zhi, lr_gz[1])
+    wave = '心情平稳'
+    wave_tone = None
     if yingqi:
-        # 有应期：以应期情绪性质为主，十神只做修饰
-        lr_mood = YINGQI_MOOD[yingqi]
-        mood_today = lr_mood['desc'] + '；' + ss_mood.get('desc', '') if ss_mood.get('desc') else lr_mood['desc']
-    else:
-        # 无应期：平稳，用十神微调语气
-        lr_mood = ss_mood if ss_mood else {'tone': base_tone, 'freq': base_freq, 'desc': '心情平稳'}
-        mood_today = lr_mood.get('desc', '心情平稳')
+        yq = YINGQI_MOOD[yingqi]
+        stability = month_persona['stability']  # 0-10
+        modulate = 1 - stability / 10  # 稳定度越高，波动越小
+        intensity = yq['intensity'] * (0.3 + modulate)
+        if intensity >= 0.6:
+            wave = yq['strong']
+            wave_tone = yq['tone']
+        elif intensity >= 0.35:
+            wave = yq['mid']
+            wave_tone = None  # 中等波动：文案说明，语气保持底色
+        else:
+            wave = yq['weak']
+            wave_tone = None  # 波动很弱，语气不变
 
-    tone = lr_mood.get('tone', base_tone)
-    freq = lr_mood.get('freq', base_freq)
+    tone = wave_tone if wave_tone else month_persona['tone']
+    freq = month_persona['freq']
 
     return {
-        'personality': '、'.join(traits[:3]) if traits else '平和自然',
-        'combo': combo_text,
+        'year': year_persona,
+        'month': month_persona,
+        'dominant_changed': month_persona['dominant'] != year_persona['dominant'],
+        'dayun': dy_gz,
+        'liunian': ln_gz,
+        'liuyue': ly_gz,
+        'liuri': lr_gz,
+        'yingqi': yingqi,
+        'wave': wave,
         'tone': tone,
         'frequency': freq,
-        'mood_today': mood_today,
-        'dayun': (dy_gz + '大运，' + dy_mood.get('desc', '')) if dy_gz else '',
-        'liunian': ln_gz + '流年，' + SHISHEN_MOOD.get(ln_ss, {}).get('desc', ''),
-        'liuyue': ly_gz + '流月，' + SHISHEN_MOOD.get(ly_ss, {}).get('desc', ''),
-        'liuri': lr_gz + '流日，' + mood_today,
+        'stability': month_persona['stability'],
     }
 
 def render_mood(m):
     """把情绪渲染成给 AI 的提示文字"""
     lines = []
-    lines.append('【本命性格】' + m['personality'])
-    if m['combo']:
-        lines.append('【性格特质】' + m['combo'])
-    if m['dayun']:
-        lines.append('【大运基调】' + m['dayun'])
-    lines.append('【流年】' + m['liunian'])
-    lines.append('【流月】' + m['liuyue'])
-    lines.append('【今日心情】' + m['mood_today'])
+    lines.append('【年度性格底色】' + m['year']['desc'])
+    if m['year']['combo']:
+        lines.append('【性格特质】' + m['year']['combo'])
+    lines.append('【本月性格】' + m['month']['desc'])
+    if m['dominant_changed']:
+        lines.append('（本月主导十神变为「' + m['month']['dominant'] + '」，性格较年度底色有所偏移）')
+    lines.append('【今日情绪】' + m['wave'])
     lines.append('【回复要求】语气：' + m['tone'] + '；频率：' + m['frequency'])
     return '\n'.join(lines)
 
