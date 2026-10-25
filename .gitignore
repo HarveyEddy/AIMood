@@ -1,0 +1,6 @@
+# 安装时生成的命盘（每个用户安装后自己生成，不提交）
+profile.json
+
+# Python 缓存
+__pycache__/
+*.pyc
