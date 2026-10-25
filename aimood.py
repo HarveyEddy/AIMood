@@ -251,6 +251,35 @@ SHISHEN_COMBOS = [
     (['偏财', '食神'], '爽朗爱玩也懂享受'),
 ]
 
+# ── 地支冲合刑害（应期，地支之间的物理关系，天干不参与）──
+DZ_CHONG = {'子': '午', '午': '子', '丑': '未', '未': '丑', '寅': '申', '申': '寅', '卯': '酉', '酉': '卯', '辰': '戌', '戌': '辰', '巳': '亥', '亥': '巳'}
+DZ_HE = {'子': '丑', '丑': '子', '寅': '亥', '亥': '寅', '卯': '戌', '戌': '卯', '辰': '酉', '酉': '辰', '巳': '申', '申': '巳', '午': '未', '未': '午'}
+DZ_XING = {'寅': '巳', '巳': '申', '申': '寅', '丑': '戌', '戌': '未', '未': '丑', '子': '卯', '卯': '子', '辰': '辰', '午': '午', '酉': '酉', '亥': '亥'}
+DZ_HAI = {'子': '未', '未': '子', '丑': '午', '午': '丑', '寅': '巳', '巳': '寅', '卯': '辰', '辰': '卯', '申': '亥', '亥': '申', '酉': '戌', '戌': '酉'}
+
+# ── 应期情绪映射（流日地支 vs 日支，决定情绪性质）──
+YINGQI_MOOD = {
+    '冲': {'tone': '急躁', 'freq': '偏高', 'desc': '情绪波动大，内心不安，容易烦躁'},
+    '合': {'tone': '柔和', 'freq': '中等', 'desc': '心情顺畅，想亲近，语气偏柔和'},
+    '刑': {'tone': '压抑', 'freq': '偏低', 'desc': '有点别扭压抑，跟自己较劲'},
+    '害': {'tone': '闷', 'freq': '偏低', 'desc': '心里有疙瘩，不痛快，暗耗'},
+    '伏吟': {'tone': '念旧', 'freq': '中等', 'desc': '旧情绪复现，回到熟悉的情绪模式'},
+}
+
+def liuri_yingqi(day_zhi, liuri_zhi):
+    """流日地支 vs 日支的应期关系（冲/合/刑/害/伏吟）"""
+    if liuri_zhi == day_zhi:
+        return '伏吟'
+    if DZ_CHONG.get(liuri_zhi) == day_zhi:
+        return '冲'
+    if DZ_HE.get(liuri_zhi) == day_zhi:
+        return '合'
+    if DZ_XING.get(liuri_zhi) == day_zhi:
+        return '刑'
+    if DZ_HAI.get(liuri_zhi) == day_zhi:
+        return '害'
+    return None
+
 def liunian_gz(year):
     idx = (year - 4) % 60
     return GAN[idx % 10] + ZHI[idx % 12]
@@ -292,10 +321,19 @@ def mood(profile, now=None):
     ly_gz = month_ganzhi(now.year, now.month, now.day, now.hour)
     ly_ss = shishen(day_gan, ly_gz[0])
 
-    # 4. 流日心情
+    # 4. 流日心情（应期为主 + 十神为辅）
     lr_gz = day_ganzhi(now.year, now.month, now.day)
+    yingqi = liuri_yingqi(profile['day_zhi'], lr_gz[1])
     lr_ss = shishen(day_gan, lr_gz[0])
-    lr_mood = SHISHEN_MOOD.get(lr_ss, {})
+    ss_mood = SHISHEN_MOOD.get(lr_ss, {})
+    if yingqi:
+        # 有应期：以应期情绪性质为主，十神只做修饰
+        lr_mood = YINGQI_MOOD[yingqi]
+        mood_today = lr_mood['desc'] + '；' + ss_mood.get('desc', '') if ss_mood.get('desc') else lr_mood['desc']
+    else:
+        # 无应期：平稳，用十神微调语气
+        lr_mood = ss_mood if ss_mood else {'tone': base_tone, 'freq': base_freq, 'desc': '心情平稳'}
+        mood_today = lr_mood.get('desc', '心情平稳')
 
     tone = lr_mood.get('tone', base_tone)
     freq = lr_mood.get('freq', base_freq)
@@ -305,11 +343,11 @@ def mood(profile, now=None):
         'combo': combo_text,
         'tone': tone,
         'frequency': freq,
-        'mood_today': lr_mood.get('desc', '心情平稳'),
+        'mood_today': mood_today,
         'dayun': (dy_gz + '大运，' + dy_mood.get('desc', '')) if dy_gz else '',
         'liunian': ln_gz + '流年，' + SHISHEN_MOOD.get(ln_ss, {}).get('desc', ''),
         'liuyue': ly_gz + '流月，' + SHISHEN_MOOD.get(ly_ss, {}).get('desc', ''),
-        'liuri': lr_gz + '流日，' + lr_mood.get('desc', ''),
+        'liuri': lr_gz + '流日，' + mood_today,
     }
 
 def render_mood(m):
